@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BrowserRouter } from "react-router-dom";
 import { useRoutes } from "react-router-dom";
@@ -6,27 +6,45 @@ import MainPage from './pages/MainPage.jsx';
 import CommentsPage from './pages/CommentsPage.jsx';
 
 function AppRoutes() {
-    const res_topics = axios.get("http://127.0.0.1:8080/get_topics/");
-    const res_subjects = [
-        {
-            id: 1,
-            name: "Бред",
-        },
-        {
-            id: 2,
-            name: "Психология",
-        },
+    const [resTopics, setResTopics] = useState(null); // Для хранения полученных данных
+    const [isLoading, setIsLoading] = useState(true); // Для отслеживания статуса загрузки
+
+    useEffect(() => {
+        // Делаем запрос только один раз при монтировании компонента
+        axios.get("http://localhost:8080/get_topics")
+            .then(response => {
+                setResTopics(response.data); // Сохраняем результат в состоянии
+                setIsLoading(false); // Загрузка завершена
+            })
+            .catch(error => {
+                console.error('Ошибка при запросе:', error);
+                setIsLoading(false); // Загрузка завершена с ошибкой
+            });
+    }, []); // Пустой массив зависимостей: запрос делается один раз
+
+    // Пока данные загружаются, показываем индикатор загрузки
+    if (isLoading) {
+        return <div>Загрузка...</div>;
+    }
+
+    const resSubjects = [
+        { id: 1, name: "Бред" },
+        { id: 2, name: "Психология" }
     ];
-    return useRoutes([
+
+    // Если данные загружены, рендерим маршруты
+    const routes = useRoutes([
         {
             path: "/",
-            element: <MainPage res_topics={res_topics} res_subjects={res_subjects}/>,
+            element: <MainPage res_topics={resTopics} res_subjects={resSubjects} />,
         },
         {
             path: "/topics/1",
-            element: <CommentsPage title="Я еблан" description="Выбор правильной темы для исследования — это первый и один из самых важных шагов на пути к успешной научной работе. Тема должна быть актуальной, интересной и соответствовать вашим научным интересам. Важно учитывать доступность материалов для исследования, а также возможности проведения экспериментов или анализа данных. Также стоит подумать о практическом значении работы и ее вклад в развитие определенной области науки. В этой статье мы рассмотрим несколько важных факторов, которые помогут вам выбрать идеальную тему для исследования." day="1" month="3" year="2012" subject="Бред"/>,
+            element: <CommentsPage title="Я еблан" description="Выбор правильной темы для исследования — это первый и один из самых важных шагов на пути к успешной научной работе." day="1" month="3" year="2012" subject="Бред" />,
         },
-      ]);
+    ]);
+
+    return routes; // Возвращаем маршруты, как JSX
 };
 
 function App() {
