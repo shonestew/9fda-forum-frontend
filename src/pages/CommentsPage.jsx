@@ -6,6 +6,24 @@ function CommentsPage(props) {
     const [message, setMessage] = useState('');
     const [yourMessage, setYourMessage] = useState(null);
 
+    useEffect(() => {
+        // Делаем запрос только один раз при монтировании компонента
+        axios.get("http://localhost:8080/get_subjects")
+            .then(response => {
+                setResTopics(response.data); // Сохраняем результат в состоянии
+                setIsLoading(false); // Загрузка завершена
+            })
+            .catch(error => {
+                console.error('Ошибка при запросе:', error);
+                setIsLoading(false); // Загрузка завершена с ошибкой
+            });
+    }, []); // Пустой массив зависимостей: запрос делается один раз
+
+    // Пока данные загружаются, показываем индикатор загрузки
+    if (isLoading) {
+        return <div>Загрузка...</div>;
+    };
+
     const topicMessages = ( <TopicComment author="Стив" text="Тест3" day="3" month="4" year="2044"/> );
     const newMessage = (e) => {
         e.preventDefault();

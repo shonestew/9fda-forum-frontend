@@ -6,45 +6,45 @@ import MainPage from './pages/MainPage.jsx';
 import CommentsPage from './pages/CommentsPage.jsx';
 
 function AppRoutes() {
-    const [resTopics, setResTopics] = useState(null); // Для хранения полученных данных
-    const [isLoading, setIsLoading] = useState(true); // Для отслеживания статуса загрузки
+    const [resTopics, setResTopics] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [resSubjects, setResSubjects] = useState(null);
 
     useEffect(() => {
-        // Делаем запрос только один раз при монтировании компонента
-        axios.get("http://localhost:8080/get_topics")
-            .then(response => {
-                setResTopics(response.data); // Сохраняем результат в состоянии
-                setIsLoading(false); // Загрузка завершена
-            })
-            .catch(error => {
+        const fetchData = async () => {
+            try {
+                const [topicsResponse, subjectsResponse] = await Promise.all([
+                    axios.get("http://localhost:8080/api/v1/get_topics"),
+                    axios.get("http://localhost:8080/api/v1/get_subjects")
+                ]);
+                setResTopics(topicsResponse.data);
+                setResSubjects(subjectsResponse.data);
+            } catch (error) {
                 console.error('Ошибка при запросе:', error);
-                setIsLoading(false); // Загрузка завершена с ошибкой
-            });
-    }, []); // Пустой массив зависимостей: запрос делается один раз
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-    // Пока данные загружаются, показываем индикатор загрузки
+        fetchData();
+    }, []);
+
     if (isLoading) {
         return <div>Загрузка...</div>;
-    }
+    };
 
-    const resSubjects = [
-        { id: 1, name: "Бред" },
-        { id: 2, name: "Психология" }
-    ];
-
-    // Если данные загружены, рендерим маршруты
-    const routes = useRoutes([
+    const Routes = useRoutes([
         {
             path: "/",
             element: <MainPage res_topics={resTopics} res_subjects={resSubjects} />,
         },
         {
-            path: "/topics/1",
-            element: <CommentsPage title="Я еблан" description="Выбор правильной темы для исследования — это первый и один из самых важных шагов на пути к успешной научной работе." day="1" month="3" year="2012" subject="Бред" />,
+            path: "/topics/",
+            element: <CommentsPage />,
         },
     ]);
 
-    return routes; // Возвращаем маршруты, как JSX
+    return Routes;
 };
 
 function App() {
