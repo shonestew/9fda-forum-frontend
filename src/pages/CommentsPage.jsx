@@ -1,30 +1,13 @@
 import { useState } from "react";
 import TopicComment from "../components/TopicComments/TopicComment.jsx";
+import axios from "axios";
 
-function CommentsPage(props) {
+async function CommentsPage(props) {
     const [nickname, setNickname] = useState('');
     const [message, setMessage] = useState('');
     const [yourMessage, setYourMessage] = useState(null);
 
-    useEffect(() => {
-        // Делаем запрос только один раз при монтировании компонента
-        axios.get("http://localhost:8080/get_subjects")
-            .then(response => {
-                setResTopics(response.data); // Сохраняем результат в состоянии
-                setIsLoading(false); // Загрузка завершена
-            })
-            .catch(error => {
-                console.error('Ошибка при запросе:', error);
-                setIsLoading(false); // Загрузка завершена с ошибкой
-            });
-    }, []); // Пустой массив зависимостей: запрос делается один раз
-
-    // Пока данные загружаются, показываем индикатор загрузки
-    if (isLoading) {
-        return <div>Загрузка...</div>;
-    };
-
-    const topicMessages = ( <TopicComment author="Стив" text="Тест3" day="3" month="4" year="2044"/> );
+    const topicMessages = await axios.get(`https://localhost:8080/api/v1/topics/${props.topic_id}`)
     const newMessage = (e) => {
         e.preventDefault();
         setYourMessage(<TopicComment author={nickname} text={message} day="2" month="4" year="2044"/>);
