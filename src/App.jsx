@@ -23,14 +23,14 @@ function AppRoutes() {
                 console.error('Ошибка при запросе:', error);
             } finally {
                 setIsLoading(false);
-            }
+            };
         };
 
         fetchData();
     }, []);
 
     if (isLoading) {
-        return <div>Загрузка...</div>;
+        return <div>Загрузка...</div>
     };
 
     const Routes = useRoutes([
@@ -39,7 +39,7 @@ function AppRoutes() {
             element: <MainPage res_topics={resTopics} res_subjects={resSubjects} />,
         },
         {
-            path: "/topics/",
+            path: "/topics/:id",
             element: <CommentsPage />,
         },
     ]);
