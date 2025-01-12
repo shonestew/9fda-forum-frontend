@@ -155,6 +155,37 @@ footer {
   width: 100%; /* Гарантирует, что футер будет растягиваться на всю ширину */
 }
 
+/* Адаптивность для экранов от 768px до 938px */
+@media (max-width: 938px) {
+  .content {
+      flex-direction: column;
+      gap: 10px;
+  }
+
+  .topic-info {
+      flex: 1; /* Уменьшаем ширину темы, чтобы она не занимала всю ширину */
+  }
+
+  .topic-card {
+      width: 100%; /* Делаем карточки тем на всю ширину */
+  }
+
+  .sidebar {
+      flex: 1; /* Плавно адаптируем боковую панель */
+      order: -1; /* Меняем порядок элементов, если нужно */
+      margin-bottom: 20px; /* Увеличиваем отступ снизу */
+  }
+
+  nav ul li {
+      display: inline-block; /* Горизонтальное расположение кнопок */
+      margin-right: 10px;
+  }
+
+  nav ul li:last-child {
+      margin-right: 0;
+  }
+}
+
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
   .content {
@@ -168,11 +199,11 @@ footer {
   }
 
   nav ul li {
-      display: inline-block; /* Горизонтальное расположение кнопок */
-      margin-right: 20px; /* Расстояние между кнопками */
+      display: inline-block;
+      margin-right: 20px;
   }
 
   nav ul li:last-child {
-      margin-right: 0; /* Убираем отступ у последней кнопки */
+      margin-right: 0;
   }
 }
